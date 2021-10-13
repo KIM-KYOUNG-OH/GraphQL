@@ -177,6 +177,21 @@ Introspection은 서버 자체에서 현재 서버에 정의된 스키마의 실
 Client Side에서는 백엔드 개발자에게 따로 요청할 필요 없이 Introspection에 명시된 실시간 스키마 정보를 보고, 그에 맞게 쿼리문을 작성하면 된다. 
 Introspection용 쿼리가 따로 존재하지만 굳이 스키마 Introspection을 위해 gql 쿼리문을 작성할 필요가 없다.  
 대부분의 서버용 gql 라이브러리에는 쿼리용 IDE를 제공한다.  
+<img width="679" alt="스크린샷 2021-10-13 오후 8 56 23" src="https://user-images.githubusercontent.com/66231761/137127918-be8607eb-41f4-4d20-8b9e-61be8de382d2.png">
+
+개발자는 Introspection을 활용하여 직접 Query나 Mutation, 필드 스키마를 확인할 수 있다.  
+다만 보안상의 이유로 스키마 공개는 신중해야 한다.  
+gql 라이브러리는 해당 기능을 켜고 끄게 하는 옵션이 존재한다.  
+
+# GraphQL의 다양한 라이브러리들
+gql 자체는 쿼리 언어이다.  
+gql을 구체적으로 활용할 수 있도록 돕는 라이브러리들이 존재한다.  
+
+1. Relay
+2. Apollo GraphQL
+
+
+
 
 
 # Reference  
