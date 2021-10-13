@@ -16,7 +16,7 @@ Rest API는 각 EndPoint마다 데이터베이스 쿼리가 달리지는 반면,
 gql은 데이터베이스나 플랫폼, 네트워크에 종속적이지 않다.  
 일반적으로 gql의 인터페이스간 송수신은 Application Layer의 HTTP POST 메서드와 웹소켓 프로토콜을 사용한다.  
 필요에 따라 Transport Layer의 TCP/UDP나 DataLink Layer의 이더넷 프레임을 활용 가능하다.  
-<img width="780" alt="스크린샷 2021-10-13 오후 7 12 31" src="https://user-images.githubusercontent.com/66231761/137113953-bbe2763d-442c-41aa-af9f-07d59e61fd5b.png">
+<img width="780" alt="스크린샷 2021-10-13 오후 7 12 31" src="https://user-images.githubusercontent.com/66231761/137113953-bbe2763d-442c-41aa-af9f-07d59e61fd5b.png">  
 REST API에서 프론트앤드 프로그래머는 백앤드 프로그래머가 작성한 API의 request/response 형식에 의존하게 된다.  
 그러나 gql API에선 이런 의존도가 사라진다. 다만, 데이터 스키마에 대한 협업 의존성은 존재한다.  
 
