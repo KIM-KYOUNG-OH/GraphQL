@@ -92,7 +92,92 @@ type Character {
 - 필드: name, appearsIn
 - 스칼라 타입: String, ID, int 등
 - 느낌표(!): 필수 값(Not Null)
-- 대괄호([, ])
+- 대괄호([, ]): 배열을 의미(array)
+
+## 리졸버(Resolver)
+REST API와 다르게 gql API에서는 데이터를 가져오는 구체적인 과정을 직접 구현해야 한다.  
+그 구체적인 과정은 Resolver가 담당하고 프로그래머가 Resolver를 직접 구현해야한다는 부담은 있지만,  
+이를 통해서 데이터 source의 종류에 상관 없이 구현이 가능하다.  
+예를 들면, Resolver를 통해 데이터베이스나 일반 파일에 접근 가능하고 http, SOAP와 같은 네트워크 프로토콜로 원격 데이터를 가져올 수도 있다.  
+
+```query
+type Query {
+  users: [User]
+  user(id: ID): User
+  limits: [Limit]
+  limit(UserId: ID): Limit
+  paymentsByUser(userId: ID): [Payment]
+}
+
+/*
+ * User와 Limit은 1:1 관계
+ * User와 Payment는 1:N 관계
+ */
+
+type User {
+  id: ID!
+  name: String!
+  sex: SEX!
+  birthDay: String!
+  phoneNumber: String!
+}
+
+type Limit {
+  id: ID!
+  UserId: ID
+  max: Int!
+  amount: Int
+  user User
+}
+
+type Payment {
+  id: ID!
+  limit: Limit!
+  user: User!
+	pg: PaymentGateway!
+	productName: String!
+	amount: Int!
+	ref: String
+	createdAt: String!
+	updatedAt: String!
+}
+```
+gql 쿼리에서는 각각의 필드마다 함수가 하나씩 존재한다고 생각하면 편하다.  
+이런 각각의 함수를 Resolver라고 한다.  
+필드가 스칼라 값인 경우, 더 이상의 연쇄적인 Resolver 호출이 일어나지 않고 실행이 즉시 종료된다.  
+필드가 스칼라 의외의 우리가 정의한 타입인 경우, 해당 타입의 리졸버를 호출하게 된다.  
+이런 연쇄적인 Resolver 호출 과정은 DFS와 비슷하고 'Graph'라는 단어를 쓴 이유라고 추측할 수 있다.  
+Resolver를 이용하여 필요한 데이터만 최적화하여 호출할 수 있다.  
+
+```query
+Query: {
+  paymentsByUser: async (parent, { userId }, context, info) => {
+      const limit = await Limit.findOne({ where: { UserId: userId } })
+      const payments = await Payment.findAll({ where: { LimitId: limit.id } })
+      return payments        
+  },  
+},
+Payment: {
+  limit: async (payment, args, context, info) => {
+    return await Limit.findOne({ where: { id: payment.LimitId } })
+  }
+}
+```
+리졸버 함수는 위와 같이 총 4개의 인자를 받는다.  
+- 첫번째 인자(parent)는 연쇄적 Resolver 호출에서 부모 Resolver가 리턴한 객체이다. 이 객체로 현재 Resolver가 내보낼 값을 조절할 수 있다.
+- 두번째 인자(args)는 쿼리에서 입력으로 넣은 인자다.
+- 세번째 인자(context)는 모든 Resolver에 전달된다. 주로 미들웨어를 통해 입력된 로그인 정보나 권한 같은 정보를 가진다.
+- 네번째 인자(info)는 Schema 정보와 현재 쿼리의 특정 필드 정보를 가진다. 잘 사용하지 않는 필드이다.
+
+## 인트로스펙션(Introspection)  
+REST API 협업 방식에서는 API 명세서를 주고받는 절차가 필수적이었다.  
+때때로 API 변경사항을 제때 반영하지 못하거나 프론트앤드에서 일일이 명세서를 확인해야해서 작업 생산성을 저해시키는 원인이 되기도 한다.  
+이런 문제를 해결하는 것이 gql의 Introspection이다.  
+Introspection은 서버 자체에서 현재 서버에 정의된 스키마의 실시간 정보를 공유할 수 있게한다.  
+Client Side에서는 백엔드 개발자에게 따로 요청할 필요 없이 Introspection에 명시된 실시간 스키마 정보를 보고, 그에 맞게 쿼리문을 작성하면 된다. 
+Introspection용 쿼리가 따로 존재하지만 굳이 스키마 Introspection을 위해 gql 쿼리문을 작성할 필요가 없다.  
+대부분의 서버용 gql 라이브러리에는 쿼리용 IDE를 제공한다.  
+
 
 # Reference  
 - https://tech.kakao.com/2019/08/01/graphql-basic/  
