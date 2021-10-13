@@ -190,11 +190,8 @@ gql을 구체적으로 활용할 수 있도록 돕는 라이브러리들이 존�
 1. Relay
 2. Apollo GraphQL
 
-
-
-
-
 # Reference  
 - https://tech.kakao.com/2019/08/01/graphql-basic/  
 - https://ko.wikipedia.org/wiki/%EA%B7%B8%EB%9E%98%ED%94%84QL  
 - https://blog.apollographql.com/graphql-vs-rest-5d425123e34b
+- https://jinhokwon.github.io/springboot/springboot-graphql/
